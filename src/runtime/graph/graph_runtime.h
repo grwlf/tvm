@@ -9,6 +9,8 @@
 #define TVM_RUNTIME_GRAPH_GRAPH_RUNTIME_H_
 
 #include <string>
+#include <tvm/runtime/module.h>
+#include <tvm/runtime/packed_func.h>
 
 namespace tvm {
 namespace runtime {
@@ -25,6 +27,13 @@ struct TVMOpParam {
   uint32_t num_outputs;
   uint32_t flatten_data;
 };
+
+
+Module GraphRuntimeCreate(std::string sym_json,
+                          tvm::runtime::Module m,
+                          int device_type,
+                          int device_id);
+
 
 }  // namespace runtime
 }  // namespace tvm
