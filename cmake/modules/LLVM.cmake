@@ -10,7 +10,7 @@ if(NOT USE_LLVM STREQUAL "OFF")
   # Set flags that are only needed for LLVM target
   add_definitions(-DTVM_LLVM_VERSION=${TVM_LLVM_VERSION})
   file(GLOB COMPILER_LLVM_SRCS src/codegen/llvm/*.cc)
-  list(APPEND TVM_LINKER_LIBS ${LLVM_LIBS})
+  list(APPEND TVM_LINKER_LIBS LLVM)
   list(APPEND COMPILER_SRCS ${COMPILER_LLVM_SRCS})
   if(NOT MSVC)
     set_source_files_properties(${COMPILER_LLVM_SRCS}
