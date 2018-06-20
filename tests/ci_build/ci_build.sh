@@ -93,10 +93,11 @@ echo "BUILD_TAG: ${BUILD_TAG}"
 echo "DOCKER CONTAINER NAME: ${DOCKER_IMG_NAME}"
 echo ""
 
+PROXY="http://10.122.85.159:3128"
 
 # Build the docker container.
 echo "Building container (${DOCKER_IMG_NAME})..."
-docker build -t ${DOCKER_IMG_NAME} \
+docker build --build-arg=http_proxy="$PROXY" --build-arg=https_proxy="$PROXY" --build-arg=ftp_proxy="$PROXY" -t ${DOCKER_IMG_NAME} \
     -f "${DOCKERFILE_PATH}" "${DOCKER_CONTEXT_PATH}"
 
 # Check docker build status
