@@ -1,8 +1,9 @@
-PYTHON ?= python
+PYTHON ?= python3
 
-TVM_ROOT = $(shell cd ../../../; pwd)
+TVM_ROOT = $(shell cd ../../; pwd)
 NNVM_ROOT = $(TVM_ROOT)/nnvm
 DMLC_ROOT = $(TVM_ROOT)/dmlc-core
+TOPI_ROOT = $(TVM_ROOT)/topi
 
 X86_CFLAGS = \
 	-std=c++11 -O0 -g -fPIC \
@@ -13,6 +14,9 @@ X86_CFLAGS = \
 	-I$(DMLC_ROOT)/include\
 	-DDMLC_LOG_STACK_TRACE=0 \
 
+X86_PYTHONPATH = \
+  $(TVM_ROOT)/python:$(NNVM_ROOT)/python:$(TOPI_ROOT)/python
+
 X86_LDFLAGS = \
 	-L$(TVM_ROOT)/build
 
@@ -22,7 +26,7 @@ all: bin/run_model
 
 lib/build_model.stamp: build_model.py
 	@mkdir -p $(@D)
-	$(PYTHON) build_model.py
+	PYTHONPATH=$(X86_PYTHONPATH):$$PYTHONPATH $(PYTHON) build_model.py
 
 .INTERMEDIATE: lib/build_model.stamp
 lib/deploy_graph.json lib/deploy_params.bin lib/deploy_lib.o: lib/build_model.stamp
