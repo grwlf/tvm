@@ -902,7 +902,7 @@ class GraphProto(object):
         Follow the tensorflow graph definition to parse and convert it to NNVM.
         Some of the assumptions listed below.
 
-            -> First Const or Placeholder node will be considered as graph input.
+            -> First Placeholder or Const node will be considered as graph input.
             -> Rest all Const nodes are params.
             -> Last node is assumed as graph output.
             -> _output_shapes : Attribute should present in the tenserflow forzen graph.
@@ -924,10 +924,6 @@ class GraphProto(object):
         params : dict
             A dict of name: tvm.nd.array pairs, used as pretrained weights
         """
-        # Parse throught all nodes and start extracting
-        # params aka Const nodes
-        # input nodes  : First const node
-        # normal nodes : other normal nodes
 
         try:
             from tensorflow.python.framework import tensor_util
@@ -935,6 +931,32 @@ class GraphProto(object):
             raise ImportError(
                 "Unable to import tensorflow which is required {}".format(e))
 
+        # Parse the nodes briefly to determine the preconditions:
+        #  a. Placeholders
+        #  b. Missing operations to report in advance
+        has_placeholders = False
+        missing_operators = set()
+        for node in graph.node:
+            if node.op == "Placeholder":
+                has_placeholders = True
+            elif node.op == "Const":
+                pass
+            else:
+                if node.op in _identity_list:
+                    pass
+                elif node.op in _convert_map:
+                    pass
+                else:
+                    missing_operators.add(node.op)
+
+        if missing_operators:
+            raise NotImplementedError( \
+                "The following operators are  not implemented: {}".format(missing_operators))
+
+        # Parse the nodes to re-create TF graph using Symbol API of NNVM
+        # * Input node will be produced by first placeholder node, or by first
+        #   Const node if there are no placeholders
+        # * Other nodes will be mapped using `_convert_map` and other translation facilities
         for node in graph.node:
             # Tensorflow doesn't have seperate list for params extraction.
             # Operator name 'Const' is treated as a parameter to build NNVM params dict.
@@ -956,7 +978,7 @@ class GraphProto(object):
                         "Please freeze the graph with add_shapes=True")
             elif node.op == "Const":
                 # Assuming first Const node as Graph Input node
-                if self._input_node == '':
+                if self._input_node == '' and not has_placeholders:
                     self._input_node = node.name
                     self._num_input += 1
                     self._nodes[node.name] = _sym.Variable(name=node.name)
