@@ -443,6 +443,15 @@ class GraphProto(object):
         # input nodes  : First const node
         # normal nodes : other normal nodes
 
+        def _get_output_shapes(node):
+            output_shapes = getattr(self._parse_attr(node.attr),'_output_shapes',None)
+            if output_shapes is None:
+                raise ImportError(
+                    "Unable to import tensorflow model, node \"%s\" doesn't have _output_shapes attribute" %
+                        (str(node.name),))
+            return output_shapes
+
+
         try:
             from tensorflow.python.framework import tensor_util
         except ImportError as e:
@@ -460,7 +469,7 @@ class GraphProto(object):
 
                 self._output_shapes[node.name] = \
                      [tensor_util.TensorShapeProtoToList(shape) \
-                     for shape in self._parse_attr(node.attr)['_output_shapes']]
+                     for shape in _get_output_shapes(node)]
             elif node.op == "Const":
                 # Assuming first Const node as Graph Input node
                 if self._input_node == '':
@@ -478,7 +487,7 @@ class GraphProto(object):
 
                 self._output_shapes[node.name] = \
                      [tensor_util.TensorShapeProtoToList(shape) \
-                     for shape in self._parse_attr(node.attr)['_output_shapes']]
+                     for shape in _get_output_shapes(node)]
             else:
                 attr = self._parse_attr(node.attr)
                 self._output_shapes[node.name] = \
