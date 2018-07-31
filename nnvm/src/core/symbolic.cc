@@ -339,9 +339,11 @@ void Symbol::Compose(const array_view<const Symbol*>& args,
 
     if (n_req != kVarg) {
       n->inputs.resize(n_req);
+      std::ostringstream oss;
+      for(auto a:arg_vec){ oss << std::endl << "=== SYMBOL ===" << std::endl; a->Print(oss); }
       CHECK_LE(arg_vec.size(), n_req)
           << "Incorrect number of arguments, requires " << n_req
-          << ", provided " << arg_vec.size();
+          << ", provided " << arg_vec.size() << " names: " << oss.str();
       for (size_t i = 0; i < arg_vec.size(); ++i) {
         n->inputs[i] = arg_vec[i]->outputs[0];
       }

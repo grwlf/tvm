@@ -112,9 +112,14 @@ inline bool CollapseShape(const nnvm::NodeAttrs& attrs,
   return true;
 }
 
+#include <iostream>
+using namespace std;
+
+
 template<typename PType>
 inline void AxesParamParser(nnvm::NodeAttrs* attrs) {
   PType param;
+  cout << "param init " << endl;
   param.Init(attrs->dict);
   std::sort(&param.axis[0], &param.axis[param.axis.ndim()]);
   attrs->parsed = std::move(param);
@@ -280,6 +285,7 @@ inline bool InferFixedType(const NodeAttrs& attrs,
   return true;
 }
 
+
 NNVM_REGISTER_BASE_REDUCE_OP(argmax)
 .describe(R"code(Creates an operation that finds the indices of the maximum
 values over a given axis.
@@ -295,6 +301,7 @@ values over a given axis.
                     const Array<Tensor>& inputs,
                     const Array<Tensor>& out_info) {
     const ReduceParam& param = nnvm::get<ReduceParam>(attrs.parsed);
+    cout << "AXIS [" << param.axis << "]" << endl;
     TShape r_axes = GetReduceAxes(inputs[0]->shape.size(),
                                   param.axis, param.exclude);
     auto axis = ShapeToArray(r_axes);

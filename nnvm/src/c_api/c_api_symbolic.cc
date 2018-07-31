@@ -82,6 +82,9 @@ int NNGetOpInfo(OpHandle handle,
   API_END();
 }
 
+#include <iostream>
+using namespace std;
+
 int NNSymbolCreateAtomicSymbol(OpHandle creator,
                                nn_uint num_param,
                                const char **keys,
@@ -92,9 +95,11 @@ int NNSymbolCreateAtomicSymbol(OpHandle creator,
   const Op* op = static_cast<const Op*>(creator);
   std::unordered_map<std::string, std::string> kwargs;
   for (nn_uint i = 0; i < num_param; ++i) {
+    cout << "key " << keys[i] << " val " << vals[i] << endl;
     kwargs.insert({std::string(keys[i]), std::string(vals[i])});
   }
   *s = Symbol::CreateFunctor(op, std::move(kwargs));
+  cout << "symbol created" << endl;
   *out = s;
   API_END_HANDLE_ERROR(delete s;);
 }

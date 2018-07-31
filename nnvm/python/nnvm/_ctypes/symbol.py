@@ -173,6 +173,9 @@ def _make_atomic_symbol_function(handle, name):
         # create atomic symbol
         param_keys = c_array(ctypes.c_char_p, param_keys)
         param_vals = c_array(ctypes.c_char_p, param_vals)
+
+        print('name', name, 'kwargs', kwargs, 'attr', attr, 'keys', param_keys, 'vals', param_vals)
+
         sym_handle = SymbolHandle()
         check_call(_LIB.NNSymbolCreateAtomicSymbol(
             handle,
