@@ -339,6 +339,11 @@ def _concat():
             extras={'axis': axis.asnumpy()[0]})(inputs, attr)
     return _impl
 
+def _pack():
+    def _impl(inputs, attr, params):
+        return _sym.concatenate(*inputs, axis=int(attr["axis"]))
+    return _impl
+
 def _reshape():
     def _impl(inputs, attr, params):
         try:
@@ -673,6 +678,7 @@ _convert_map = {
     'Minimum'                           : _elemwise('min'),
     'Sum'                               : _sum(),
     'Square'                            : _square(),
+    'Pack'                              : _pack(),
     'Relu'                              : AttrCvt('relu'),
     'Reshape'                           : _reshape(),
     'ResizeBilinear'                    : _resize_bilinear(),

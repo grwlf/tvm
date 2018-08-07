@@ -705,6 +705,41 @@ def test_forward_resize_bilinear():
     _test_resize_bilinear((4, 16, 32, 32), [50, 50], False)
     _test_resize_bilinear((6, 32, 64, 64), [20, 20], True)
 
+
+
+#######################################################################
+# Pack
+# ---
+def _test_pack(axis, shape, **kwargs):
+
+    a = np.arange(np.prod(shape), dtype=np.float32).reshape(shape)
+    b = np.arange(np.prod(shape), dtype=np.float32).reshape(shape)
+
+    with tf.Graph().as_default():
+        tf_a = constant_op.constant(a, shape=shape, dtype='float32')
+        tf_b = constant_op.constant(b, shape=shape, dtype='float32')
+        tf_c = tf.stack([tf_a,tf_b], axis=axis, **kwargs)
+
+        with tf.Session() as sess:
+            graph_def = tf.graph_util.convert_variables_to_constants(
+                sess,
+                sess.graph.as_graph_def(add_shapes=True),
+                ['stack'])
+
+            assert tf_c.op.op_def.name == 'Pack', "tf.stack() is expected to produce 'Pack' operation"
+
+            tf_output = run_tf_graph(sess, [], [], 'stack:0')
+            tvm_output = run_tvm_graph(graph_def, [], [], tf_output.shape, 'float32')
+            np.testing.assert_allclose(tf_output, tvm_output)
+            sess.close()
+
+def test_forward_pack():
+    _test_pack(0, [3,2,1])
+    _test_pack(2, [4,2,4])
+    _test_pack(0, [2])
+    _test_pack(0, [0])
+    _test_pack(0, [])
+
 #######################################################################
 # Pad
 # ---
@@ -1006,6 +1041,7 @@ if __name__ == '__main__':
     if tf.__version__ == '1.4.1':
         _test_forward_concat_v2()
     test_forward_multi_input()
+    test_forward_pack()
     test_forward_inception_v3()
     test_forward_inception_v1()
     test_forward_mobilenet()
