@@ -929,7 +929,7 @@ class GraphProto(object):
                 "Unable to import tensorflow which is required {}".format(e))
 
         placeholders,missing_operators = self._parse_import_prerequisites(graph)
-        print(len(placeholders))
+        # print(len(placeholders))
 
         if missing_operators:
             raise NotImplementedError( \

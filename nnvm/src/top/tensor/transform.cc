@@ -442,6 +442,8 @@ NNVM_REGISTER_OP(cast)
 // reshape
 DMLC_REGISTER_PARAMETER(ReshapeParam);
 
+#include <iostream>
+using namespace std;
 inline bool ReshapeInferShape(const NodeAttrs& attrs,
                               std::vector<TShape>* in_attrs,
                               std::vector<TShape>* out_attrs) {
@@ -459,7 +461,7 @@ inline bool ReshapeInferShape(const NodeAttrs& attrs,
   int infer_idx = -1;
 
   for (dim_t i = 0; i < target_shape.ndim(); ++i) {
-    int svalue = target_shape[i];
+    int64_t svalue = target_shape[i];
     // special flag handling for shape inference.
     if (svalue > 0) {
       oshape.push_back(svalue);
@@ -506,8 +508,8 @@ inline bool ReshapeInferShape(const NodeAttrs& attrs,
 
   if (infer_idx >= 0) {
     if (dshape.Size() > 0) {
-      int new_size = 1;
-      for (int x : oshape) {
+      int64_t new_size = 1;
+      for (auto x : oshape) {
         new_size *= x;
       }
       oshape[infer_idx] = dshape.Size() / new_size;
@@ -517,9 +519,9 @@ inline bool ReshapeInferShape(const NodeAttrs& attrs,
   }
   TShape out_shape(oshape.begin(), oshape.end());
   CHECK_EQ(out_shape.Size(), dshape.Size())
-      << "Target shape size is different to source. "
-      << "Target: " << out_shape
-      << "\nSource: " << dshape;
+      << "Target shape size is different to source. " << std::endl
+      << "Target: " << out_shape << std::endl
+      << "Source: " << dshape;
   NNVM_ASSIGN_OUTPUT_SHAPE(attrs, *out_attrs, 0, out_shape);
   return true;
 }

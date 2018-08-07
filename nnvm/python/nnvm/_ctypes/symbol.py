@@ -76,7 +76,7 @@ class SymbolBase(object):
 
         for arg in args:
             if not isinstance(arg, SymbolBase):
-                raise TypeError('Compose expect `Symbol` as arguments')
+                raise TypeError('Compose expect `Symbol` as arguments, got "', type(arg), '"')
         for val in kwargs.values():
             if not isinstance(val, SymbolBase):
                 raise TypeError('Compose expect `Symbol` as arguments')
