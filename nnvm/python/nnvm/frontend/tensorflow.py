@@ -928,7 +928,8 @@ class GraphProto(object):
             raise ImportError(
                 "Unable to import tensorflow which is required {}".format(e))
 
-        missing_operators = self._parse_import_prerequisites(graph)
+        placeholders,missing_operators = self._parse_import_prerequisites(graph)
+        print(len(placeholders))
 
         if missing_operators:
             raise NotImplementedError( \
@@ -1026,9 +1027,10 @@ class GraphProto(object):
                 which are not supported
         """
         missing_operators = set()
+        placeholders = []
         for node in graph.node:
             if node.op == "Placeholder":
-                pass
+                placeholders.append(node)
             elif node.op == "Const":
                 pass
             else:
@@ -1037,7 +1039,7 @@ class GraphProto(object):
                 else:
                     missing_operators.add(node.op)
 
-        return missing_operators
+        return placeholders,missing_operators
 
     def _parse_param(self, key, value, name):
         try:
