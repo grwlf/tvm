@@ -431,7 +431,7 @@ def _test_argx(func, data, **kwargs):
 
             sess.close()
 
-def test_argmin_argmax():
+def test_forward_argminmax():
     for axis in [None,0,1,2]:
         data = np.random.uniform(size=(8,4,9)).astype('float32')
         _test_argx(tf.argmax, data=data, axis=axis)
@@ -1038,6 +1038,7 @@ if __name__ == '__main__':
     test_forward_reshape()
     test_forward_squeeze()
     test_forward_sigmoid()
+    test_forward_argminmax()
     if tf.__version__ == '1.4.1':
         _test_forward_concat_v2()
     test_forward_multi_input()
