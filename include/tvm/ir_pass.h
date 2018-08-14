@@ -22,6 +22,8 @@
 namespace tvm {
 namespace ir {
 
+EXPORT Expr Jacobian(Expr expr, Tensor input, Array<Expr> indices);
+
 /*!
  * \brief Simplify the expression.
  * \param expr The expression to be simplifed.
