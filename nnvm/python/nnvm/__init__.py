@@ -8,5 +8,6 @@ from . import symbol as sym
 from . import symbol
 from ._base import NNVMError
 from . import frontend
+from . import staging
 
 __version__ = _base.__version__
