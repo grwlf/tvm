@@ -23,6 +23,7 @@
 #include <topi/nn/dilate.h>
 #include <topi/nn/flatten.h>
 #include <topi/nn/mapping.h>
+#include <topi/nn/optimizer.h>
 #include <topi/nn/pooling.h>
 #include <topi/nn/softmax.h>
 #include <topi/nn/upsampling.h>
@@ -417,6 +418,16 @@ TVM_REGISTER_GLOBAL("topi.nn.lrn")
                 static_cast<double>(args[3]),
                 static_cast<double>(args[4]),
                 static_cast<double>(args[5]));
+  });
+
+TVM_REGISTER_GLOBAL("topi.nn.SGDOptimizer")
+.set_body([](TVMArgs args, TVMRetValue *rv) {
+  *rv = nn::SGDOptimizer(args[0], args[1], args[2]);
+  });
+
+TVM_REGISTER_GLOBAL("topi.nn.AdamOptimizer")
+.set_body([](TVMArgs args, TVMRetValue *rv) {
+  *rv = nn::AdamOptimizer(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]);
   });
 
 TVM_REGISTER_GLOBAL("topi.vision.reorg")
