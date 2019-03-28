@@ -92,7 +92,8 @@ set(USE_GRAPH_RUNTIME_DEBUG OFF)
 # - ON: enable llvm with cmake's find search
 # - OFF: disable llvm
 # - /path/to/llvm-config: enable specific LLVM when multiple llvm-dev is available.
-set(USE_LLVM OFF)
+#set(USE_LLVM ON)
+set(USE_LLVM ../../polly/llvm_build/bin/llvm-config)
 
 #---------------------------------------------
 # Contrib libraries

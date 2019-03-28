@@ -12,6 +12,8 @@
 #include "../../pass/ir_util.h"
 #include "../../arithmetic/compute_expr.h"
 
+#include <polly/RegisterPasses.h>
+
 namespace tvm {
 namespace codegen {
 
@@ -263,6 +265,12 @@ void CodeGenLLVM::Optimize() {
 
   builder.populateFunctionPassManager(fpass);
   builder.populateModulePassManager(mpass);
+
+  LOG(INFO) << "Initializing Polly";
+
+  llvm::PassRegistry& Registry = *llvm::PassRegistry::getPassRegistry();
+  polly::initializePollyPasses(Registry);
+  polly::registerPollyPasses(mpass);
 
   fpass.doInitialization();
   for (auto it = module_->begin(); it != module_->end(); ++it) {

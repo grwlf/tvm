@@ -30,6 +30,13 @@ IterVar IterVarNode::make(Range dom, Var var,
   n->var = var;
   n->iter_type = t;
   n->thread_tag = thread_tag;
+
+  if (dom.defined())
+    std::cerr << "Dom '" << dom << "' var '" << var << "' iter_type '" << t << "' tag '" << thread_tag << "'" << std::endl;
+  else
+    std::cerr << "Dom '" << "-" << "' var '" << var << "' iter_type '" << t << "' tag '" << thread_tag << "'" << std::endl;
+
+  /* assert(0); */
   return IterVar(n);
 }
 
